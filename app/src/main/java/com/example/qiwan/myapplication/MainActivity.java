@@ -20,6 +20,9 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,32 +45,33 @@ public class MainActivity extends AppCompatActivity {
     private Button reset1;
     private Button reset2;
     private Button reset3;
-    private Button load;
-    private Button save;
     private ImageView imageView;
+    private LinearLayout layout;
     private int screenWidth;
+    private int screenHeight;
     private Matrix matrix;
     private int rotate;
     private Bitmap bitmap;
     private Uri selectedImage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        seekBar1 = (SeekBar)findViewById(R.id.sb_bar1);
-        seekBar2 = (SeekBar)findViewById(R.id.sb_bar2);
-        seekBar3 = (SeekBar)findViewById(R.id.sb_bar3);
-        reset1 = (Button)findViewById(R.id.btn_reset1);
-        reset2 = (Button)findViewById(R.id.btn_reset2);
-        reset3 = (Button)findViewById(R.id.btn_reset3);
-        load = (Button)findViewById(R.id.btn_load);
-        save = (Button)findViewById(R.id.btn_save);
-        imageView = (ImageView)findViewById(R.id.iv_view);
+        seekBar1 = (SeekBar) findViewById(R.id.sb_bar1);
+        seekBar2 = (SeekBar) findViewById(R.id.sb_bar2);
+        seekBar3 = (SeekBar) findViewById(R.id.sb_bar3);
+        reset1 = (Button) findViewById(R.id.btn_reset1);
+        reset2 = (Button) findViewById(R.id.btn_reset2);
+        reset3 = (Button) findViewById(R.id.btn_reset3);
+        imageView = (ImageView) findViewById(R.id.iv_view);
+        layout = (LinearLayout) findViewById(R.id.ll_view);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+        layout.setLayoutParams(new LinearLayout.LayoutParams(screenWidth, screenHeight - 550));
+        layout.setGravity(Gravity.CENTER);
         seekBar1.setMax(screenWidth);
         seekBar1.setProgress(screenWidth);
         seekBar2.setMax(254);
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar3.setMax(360);
         seekBar3.setProgress(180);
         matrix = new Matrix();
+
         bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
         seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -160,28 +165,33 @@ public class MainActivity extends AppCompatActivity {
                 seekBar3.setProgress(rotate + 180);
             }
         });
+    }
 
-        load.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_load:
                 startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), SELECT_IMAGE);
-            }
-        });
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                return true;
+            case R.id.menu_save:
                 try {
-                    OutputStream fOut = null;
+                    OutputStream fOut;
                     String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myTestPath";
                     File dir = new File(fullPath);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
+                    if (!dir.mkdirs()) {
+                        Log.d(MainActivity.ACCESSIBILITY_SERVICE, "Create directory failed.");
                     }
-
-                    File file = new File(fullPath + File.separator + "edit1.jpg");
+                    String originalFileName = selectedImage.getLastPathSegment();
+                    File file = new File(fullPath + File.separator + originalFileName + "_1.jpg");
                     if (!file.exists())
-                        file.createNewFile();
+                        if(!file.createNewFile())
+                            Log.d(MainActivity.ACCESSIBILITY_SERVICE, "Create file failed.");
                     fOut = new FileOutputStream(file);
                     Bitmap newBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                     newBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
@@ -193,8 +203,11 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-        });
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -204,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK){
                 selectedImage = data.getData();
                 imageView.setImageURI(selectedImage);
+                imageView.setLayoutParams(new LinearLayout.LayoutParams(seekBar1.getMax(), seekBar1.getMax()*3/4));
                 bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
             }
     }

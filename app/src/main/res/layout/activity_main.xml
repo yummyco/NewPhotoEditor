@@ -6,8 +6,9 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_view"
         android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/imageview_height"
         android:layout_gravity="center">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -16,7 +17,7 @@
             <ImageView
                 android:id="@+id/iv_view"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/imageview_height"
                 android:scaleType="fitCenter"
                 android:src="@drawable/big_683d_62291"/>
         </LinearLayout>
@@ -41,7 +42,7 @@
                 android:layout_column="2"
                 android:layout_weight="30"
                 android:layout_gravity="center_vertical"
-                android:thumb="@drawable/shine_btn"/>
+                android:thumb="@drawable/thumb_image"/>
             <Button
                 android:id="@+id/btn_reset1"
                 android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                 android:layout_column="2"
                 android:layout_weight="30"
                 android:layout_gravity="center_vertical"
-                android:thumb="@drawable/shine_btn"/>
+                android:thumb="@drawable/thumb_image"/>
             <Button
                 android:id="@+id/btn_reset2"
                 android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
                 android:layout_column="2"
                 android:layout_weight="30"
                 android:layout_gravity="center_vertical"
-                android:thumb="@drawable/shine_btn" />
+                android:thumb="@drawable/thumb_image" />
             <Button
                 android:id="@+id/btn_reset3"
                 android:layout_width="wrap_content"
@@ -101,23 +102,4 @@
                 android:text="Reset"/>
         </TableRow>
     </TableLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal">
-        <Button
-            android:id="@+id/btn_load"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Load"/>
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Save"/>
-    </LinearLayout>
 </LinearLayout>
